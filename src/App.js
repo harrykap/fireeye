@@ -7,7 +7,7 @@ const items = [
         children: [
             {
                 title: 'Canada',
-                children:[
+                children: [
                     {
                         title: 'Alberta',
                         children: [
@@ -27,25 +27,91 @@ const items = [
                     },
                 ],
             },
+            {
+                title: 'United States',
+                children: [
+                    {
+                        title: 'New York',
+                        children: [
+                            {
+                                title: 'New York',
+                                children: [],
+                            },
+                            {
+                                title: 'Rochester',
+                                children: [],
+                            },
+                            {
+                                title: 'Buffalo',
+                                children: [],
+                            },
+                        ],
+                    },
+                ],
+            },
         ],
+    },
+    {
+        title: 'Europe',
+        children: [],
     }
 ];
 
+const selectedStates = {
+    SELECTED: 1,
+    PARTIAL: 0.5,
+    UNSELECTED: 0,
+}
+
 function HierarchyItem(props) {
     const checkboxRef = useRef();
-    const { data } = props;
+    const {data} = props;
+    let {toggleCallback} = props;
+
+    if (!toggleCallback) {
+        toggleCallback = () => {
+            console.log('default toggleCallback')
+        };
+    }
+
     /*
     useEffect(() => {
         checkboxRef.current.indeterminate = true;
     })
 */
+    const [isSelected, setIsSelected] = useState(false);
+    const [selectedChildrenCount, setSelectedChildrenCount] = useState(0);
+
+    function toggleSelection(event) {
+        console.log('toggling');
+        toggleCallback(!isSelected);
+        setIsSelected(!isSelected);
+    }
+
     const childItems = data.children.map(item => {
-       return (<HierarchyItem data={item} />);
+        return (
+            <HierarchyItem data={item}
+                           toggleCallback={(isSelected) => {
+                               if (isSelected) {
+                                   setSelectedChildrenCount(selectedChildrenCount + 1);
+                               } else {
+                                   setSelectedChildrenCount(selectedChildrenCount - 1)
+                               }
+                               console.log('toggleCallback', isSelected, selectedChildrenCount);
+                           }}
+    />)
+        ;
     });
 
     return (
-        <div style={{paddingLeft:'1em'}}>
-            <div><input type="checkbox" ref={checkboxRef} /> <span>{data.title}</span></div>
+        <div style={{paddingLeft: '1em'}}>
+            <div>
+                <input type="checkbox"
+                       ref={checkboxRef}
+                       onChange={toggleSelection}/>
+                <span>{data.title}</span>
+                &nbsp;<span>{selectedChildrenCount}</span>
+            </div>
             <Collapse isOpen>
                 <div style={{paddingLeft: '1em'}}>
                     {childItems}
@@ -56,10 +122,10 @@ function HierarchyItem(props) {
 }
 
 function HierarchyNavigator(props) {
-    const { data } = props;
+    const {data} = props;
     console.log("data is", data);
     const navigatorItems = data.map(item => {
-        return (<HierarchyItem data={item} />);
+        return (<HierarchyItem data={item}/>);
     });
 
     return (
@@ -82,7 +148,7 @@ function HierarchyNavigator(props) {
 
 function App() {
     return (
-        <HierarchyNavigator data={items} />
+        <HierarchyNavigator data={items}/>
     );
 }
 
