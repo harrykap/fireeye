@@ -109,7 +109,6 @@ const SelectedStatus = {
 }
 
 function HierarchyItem(props) {
-    const checkboxRef = useRef();
     const {data} = props;
     let {toggleCallback} = props;
 
@@ -120,30 +119,44 @@ function HierarchyItem(props) {
     }
 
     const [selectedStatus, setSelectedStatus] = useState(SelectedStatus.UNSELECTED);
-    const [selectedChildren, setSelectedChildren] = useState([]);
+    const [selectedChildCount, setSelectedChildCount] = useState(0);
 
     useEffect(() => {
         setSelectedStatus(props.selectedStatus);
     }, [props.selectedStatus]);
 
+    const checkboxRef = useRef();
+    useEffect(() => {
+        if(selectedStatus === SelectedStatus.PARTIAL) {
+            checkboxRef.current.indeterminate = true;
+        } else {
+            checkboxRef.current.indeterminate = false;
+        }
+    }, [selectedStatus]);
+
     function toggleSelection() {
         console.log('toggling');
         let newStatus;
+        let newSelectedChildCount;
         switch (selectedStatus) {
             case SelectedStatus.SELECTED:
                 newStatus = SelectedStatus.UNSELECTED;
+                newSelectedChildCount = 0;
                 break;
             case SelectedStatus.UNSELECTED:
                 newStatus = SelectedStatus.SELECTED;
+                newSelectedChildCount = data.children.length;
                 break;
             case SelectedStatus.PARTIAL:
-                newStatus = SelectedStatus.PARTIAL;
+                newStatus = SelectedStatus.SELECTED;
+                newSelectedChildCount = data.children.length;
                 break;
             default:
                 newStatus = SelectedStatus.SELECTED;
                 break;
         }
         setSelectedStatus(newStatus);
+        setSelectedChildCount(newSelectedChildCount);
         toggleCallback(data, newStatus);
     }
 
@@ -155,31 +168,25 @@ function HierarchyItem(props) {
                            selectedStatus={childSelectedStatus}
                            toggleCallback={(childData, childSelectedStatus) => {
                                console.log('toggleCallback', childData, childSelectedStatus);
-                               const newSelectedChildren = selectedChildren.slice();
                                switch (childSelectedStatus) {
                                    case SelectedStatus.SELECTED:
-                                       newSelectedChildren.push(childData);
+                                       const newSelectedChildCount = selectedChildCount + 1;
+                                       setSelectedChildCount(newSelectedChildCount);
+                                       if(newSelectedChildCount === data.children.length) {
+                                           setSelectedStatus(SelectedStatus.SELECTED);
+                                       } else {
+                                           setSelectedStatus(SelectedStatus.PARTIAL);
+                                       }
                                        break;
                                    case SelectedStatus.UNSELECTED:
-                                       const childIndex = newSelectedChildren.findIndex(item => {
-                                           return item.title === childData.title
-                                       });
-                                       newSelectedChildren.splice(childIndex, 1);
+                                       setSelectedChildCount(selectedChildCount - 1);
+                                       break;
+                                   case SelectedStatus.PARTIAL:
+                                       setSelectedStatus(SelectedStatus.PARTIAL);
                                        break;
                                    default:
                                        break;
                                }
-                               setSelectedChildren(newSelectedChildren);
-                               let newSelectedStatus;
-                               if (newSelectedChildren.length === 0) {
-                                   newSelectedStatus = SelectedStatus.UNSELECTED;
-                               } else if (newSelectedChildren.length < data.children.length) {
-                                   newSelectedStatus = SelectedStatus.PARTIAL;
-                               } else {
-                                   newSelectedStatus = SelectedStatus.SELECTED;
-                               }
-                               setSelectedStatus(newSelectedStatus);
-                               checkboxRef.current.indeterminate = newSelectedStatus === SelectedStatus.PARTIAL;
                            }}
             />)
             ;
@@ -191,7 +198,7 @@ function HierarchyItem(props) {
                 <input type="checkbox"
                        ref={checkboxRef}
                        checked={selectedStatus === SelectedStatus.SELECTED}
-                       onClick={toggleSelection}/>
+                       onChange={toggleSelection}/>
                 &nbsp; <span>{data.title}</span>
             </div>
             <Collapse isOpen>
