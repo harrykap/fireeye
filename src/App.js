@@ -120,6 +120,7 @@ function HierarchyItem(props) {
 
     const [selectedStatus, setSelectedStatus] = useState(SelectedStatus.UNSELECTED);
     const [selectedChildCount, setSelectedChildCount] = useState(0);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         setSelectedStatus(props.selectedStatus);
@@ -160,6 +161,10 @@ function HierarchyItem(props) {
         toggleCallback(data, newStatus);
     }
 
+    function toggleIsOpen() {
+        setIsOpen(!isOpen);
+    }
+
     const childItems = data.children.map(item => {
         const childSelectedStatus = selectedStatus === SelectedStatus.SELECTED ? SelectedStatus.SELECTED : SelectedStatus.UNSELECTED;
         return (
@@ -176,6 +181,7 @@ function HierarchyItem(props) {
                                            setSelectedStatus(SelectedStatus.SELECTED);
                                        } else {
                                            setSelectedStatus(SelectedStatus.PARTIAL);
+                                           toggleCallback(data, selectedStatus);
                                        }
                                        break;
                                    case SelectedStatus.UNSELECTED:
@@ -183,6 +189,7 @@ function HierarchyItem(props) {
                                        break;
                                    case SelectedStatus.PARTIAL:
                                        setSelectedStatus(SelectedStatus.PARTIAL);
+                                       toggleCallback(data, selectedStatus);
                                        break;
                                    default:
                                        break;
@@ -199,9 +206,9 @@ function HierarchyItem(props) {
                        ref={checkboxRef}
                        checked={selectedStatus === SelectedStatus.SELECTED}
                        onChange={toggleSelection}/>
-                &nbsp; <span>{data.title}</span>
+                &nbsp; <span onClick={toggleIsOpen} style={{cursor:'pointer'}}>{data.title}</span>
             </div>
-            <Collapse isOpen>
+            <Collapse isOpen={isOpen}>
                 <div style={{paddingLeft: '1em'}}>
                     {childItems}
                 </div>
@@ -219,7 +226,7 @@ function HierarchyNavigator(props) {
     });
 
     return (
-        <div className="hierarchy-navigator">
+        <div style={{backgroundColor: 'blue', color:'white', border:'1px inset white', padding: '1em'}} className="hierarchy-navigator">
             {items}
         </div>
     );
