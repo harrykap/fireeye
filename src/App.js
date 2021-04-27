@@ -68,31 +68,30 @@ const items = [
                             },
                         ],
                     },
+                    {
+                        title: 'Pennsylvania',
+                        children: [
+                            {
+                                title: 'Philadelphia',
+                                children: [],
+                            },
+                            {
+                                title: 'Pittsburgh',
+                                children: [],
+                            },
+                            {
+                                title: 'Allentown',
+                                children: [],
+                            },
+                            {
+                                title: 'Wilkes-Barre',
+                                children: [],
+                            },
+                        ],
+                    },
                 ],
             },
-            /* {
-                 title: 'United States',
-                 children: [
-                     {
-                         title: 'New York',
-                         children: [
-                             {
-                                 title: 'New York',
-                                 children: [],
-                             },
-                             {
-                                 title: 'Rochester',
-                                 children: [],
-                             },
-                             {
-                                 title: 'Buffalo',
-                                 children: [],
-                             },
-                         ],
-                     },
-                 ],
-             },
-             */
+
         ],
     },
     /*
@@ -127,7 +126,7 @@ function HierarchyItem(props) {
         setSelectedStatus(props.selectedStatus);
     }, [props.selectedStatus]);
 
-    function toggleSelection(event) {
+    function toggleSelection() {
         console.log('toggling');
         let newStatus;
         switch (selectedStatus) {
