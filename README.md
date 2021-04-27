@@ -1,4 +1,4 @@
-# Demo Hierarchy Navigator For Fireeye
+# Demo Hierarchy Navigator For FireEye
 
 Two years ago I wrote a reusable general purpose react component that allowed for the browsing and selection of items in complex, multilevel hierarchies.  I had hoped to submit this as the code sample for my candidacy with FireEye. Alas, I now longer had access to that repository and could no longer locate my copy of the code.
 
