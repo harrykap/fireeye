@@ -27,6 +27,49 @@ const items = [
                     },
                 ],
             },
+            {
+                title: 'United States',
+                children: [
+                    {
+                        title: 'New York',
+                        children: [
+                            {
+                                title: 'New York City',
+                                children: [
+                                    {
+                                        title: 'Manhattan',
+                                        children: [],
+                                    },
+                                    {
+                                        title: 'Brooklyn',
+                                        children: [],
+                                    },
+                                    {
+                                        title: 'Queens',
+                                        children: [],
+                                    },
+                                    {
+                                        title: 'The Bronx',
+                                        children: [],
+                                    },
+                                    {
+                                        title: 'Staten Island',
+                                        children: [],
+                                    },
+                                ],
+                            },
+                            {
+                                title: 'Buffalo',
+                                children: [],
+                            },
+                            {
+                                title: 'Rochester',
+                                children: [],
+                            },
+                        ],
+                    },
+                ],
+            },
             /* {
                  title: 'United States',
                  children: [
@@ -114,20 +157,22 @@ function HierarchyItem(props) {
                            toggleCallback={(childData, childSelectedStatus) => {
                                console.log('toggleCallback', childData, childSelectedStatus);
                                const newSelectedChildren = selectedChildren.slice();
-                               switch(childSelectedStatus) {
+                               switch (childSelectedStatus) {
                                    case SelectedStatus.SELECTED:
                                        newSelectedChildren.push(childData);
                                        break;
                                    case SelectedStatus.UNSELECTED:
-                                       const childIndex = newSelectedChildren.findIndex(item => {return item.title === childData.title});
-                                       newSelectedChildren.splice(childIndex,1);
+                                       const childIndex = newSelectedChildren.findIndex(item => {
+                                           return item.title === childData.title
+                                       });
+                                       newSelectedChildren.splice(childIndex, 1);
                                        break;
                                    default:
                                        break;
                                }
                                setSelectedChildren(newSelectedChildren);
                                let newSelectedStatus;
-                               if(newSelectedChildren.length === 0) {
+                               if (newSelectedChildren.length === 0) {
                                    newSelectedStatus = SelectedStatus.UNSELECTED;
                                } else if (newSelectedChildren.length < data.children.length) {
                                    newSelectedStatus = SelectedStatus.PARTIAL;
